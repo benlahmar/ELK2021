@@ -1,0 +1,132 @@
+creation d'un index
+
+POST mardi2021/_doc/1
+{
+  
+}
+
+
+"definir le settings"
+
+1. close
+
+POST mardi2021/_close
+
+PUT mardi2021/_settings
+{
+   "analysis": {
+"filter": {
+"convert": {
+"type": "synonym",
+"synonyms": [
+"conferences => manifistation , evenement"
+]
+}
+},
+"analyzer": {
+"bloganalyzer": {
+"filter": [
+"lowercase"
+,
+"convert"
+],
+"char_filter": [
+"html_strip"
+],
+"type": "custom",
+"tokenizer": "standard"
+}
+},
+"tokenizer": {
+"mytokenezer": {
+"type": "standard"
+}
+}
+}
+}
+
+
+"definir le mappings"
+
+PUT mardi2021/_mapping
+{
+ "properties": {
+"category": {
+"type": "text",
+"fields": {
+"keyword": {
+"type": "keyword",
+"ignore_above": 256
+}
+}
+},
+"content": {
+  "term_vector":"with_positions_offsets_payloads",
+"analyzer":"bloganalyzer",
+"type": "text",
+"fields": {
+"keyword": {
+"type": "keyword",
+"ignore_above": 256
+}
+}
+},
+"creator": {
+"type": "text",
+"fields": {
+"keyword": {
+"type": "keyword",
+"ignore_above": 256
+}
+}
+},
+"description": {
+  "analyzer":"bloganalyzer",
+"type": "text",
+"fields": {
+"keyword": {
+"type": "keyword",
+"ignore_above": 256
+}
+}
+},
+"pubDate": {
+"type": "date"
+},
+"title": {
+  "term_vector":"with_positions",
+  "analyzer":"bloganalyzer",
+"type": "text",
+"fields": {
+"keyword": {
+"type": "keyword",
+"ignore_above": 256
+}
+}
+}
+}
+
+}
+}}
+ 
+ ouverture de l'index:
+ POST mardi2021/_open
+ 
+ GET mardi2021/_settings
+
+ GET mardi2021/_search
+ 
+reindex source vers dest
+prendred les doc de la source et les indexer dans desti ie les document il sornt analyser par setting de desti
+
+POST _reindex
+{
+  "source": {
+    "index": "blogsofrecom3"
+  },
+  "dest": {
+    "index": "mardi2021"
+  }
+}
+
+GET mardi2021/_search
