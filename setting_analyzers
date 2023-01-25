@@ -1,0 +1,50 @@
+GET myblog2022/_search
+
+POST myblog2022/_close
+
+PUT myblog2022/_settings
+{
+    "analysis": {
+      "analyzer": {
+        "myanalyzercontent":{
+          "type":"custom",
+          "tokenizer":"standard",
+          "char_filter":[
+            "html_strip",
+            "remplace"
+            ],
+          "filter":[
+            "lowercase",
+            "myfilter"
+            ]
+        }
+      },
+      "char_filter": {
+        "remplace":{
+          "type":"mapping",
+          "mappings":[
+            "la => llllla ",
+            "des => ffff",
+            "abc => www"
+            ]
+        }
+      },
+      "filter": {
+        "myfilter":{
+          "type":"stop",
+          "stopwords":"_french_"
+        }
+      }
+      
+    }
+  }
+
+POST myblog2022/_open
+
+GET myblog2022/_settings
+
+post myblog2022/_analyze
+{
+  "text":"la  bla <p>sss</p> 2022 des  abc le de ",
+  "analyzer":"myanalyzercontent"
+}
