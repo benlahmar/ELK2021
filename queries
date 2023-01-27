@@ -1,0 +1,1519 @@
+GET myblog2022/_search
+
+POST myblog2022/_close
+
+PUT myblog2022/_settings
+{
+    "analysis": {
+      "analyzer": {
+        "myanalyzercontent":{
+          "type":"custom",
+          "tokenizer":"standard",
+          "char_filter":[
+            "html_strip",
+            "remplace"
+            ],
+          "filter":[
+            "lowercase",
+            "myfilter"
+            ]
+        },
+        "myanalyzertitle":{
+          "type":"custom",
+          "filter":["stop","lowercase","stemmer", "synonym","elision"],
+          "tokenizer":"standard"
+        }
+      },
+      "char_filter": {
+        "remplace":{
+          "type":"mapping",
+          "mappings":[
+            "la => llllla ",
+            "des => ffff",
+            "abc => www"
+            ]
+        }
+      },
+      "filter": {
+        "myfilter":{
+          "type":"stop",
+          "stopwords":"_french_"
+        },
+        "synonym": {
+            "type": "synonym",
+            "lenient": true,
+            "synonyms": [ "open  => libre ,open " ,
+            "coder => coder, implementer, developper"]
+          }
+      }
+      
+    }
+  }
+
+POST myblog2022/_open
+
+GET myblog2022/_settings
+
+post myblog2022/_analyze
+{
+  "text":"C’est la rentrée de l’open source et du Hackergarten. coder",
+  "analyzer":"myanalyzertitle"
+}
+
+
+//tokinzer standar
+//filter syn  stemmer lowercase stopword
+
+
+
+GET myblog2022/_mapping
+
+
+POST sof01234/_doc/4
+{
+  "cccc":"casa"
+}
+
+
+PUT sof01234/_mapping
+{
+  "dynamic":"strict",
+  
+  "properties": {
+    
+        "adresse": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+          
+        }
+        ,
+        "age": {
+          "type": "long"
+        },
+        "name": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "ville":{
+          "type":"text"
+        }
+      }
+}
+
+
+
+GET myblog2022/_settings
+
+
+PUT myblog2023/
+{
+ 
+  
+       "settings":{
+        "analysis": {
+          "filter": {
+            "myfilter": {
+              "type": "stop",
+              "stopwords": "_french_"
+            },
+            "synonym": {
+              "type": "synonym",
+              "lenient": "true",
+              "synonyms": [
+                "open  => libre ,open ",
+                "coder => coder, implementer, developper"
+              ]
+            }
+          },
+          "analyzer": {
+            "myanalyzercontent": {
+              "filter": [
+                "lowercase",
+                "myfilter"
+              ],
+              "char_filter": [
+                "html_strip",
+                "remplace"
+              ],
+              "type": "custom",
+              "tokenizer": "standard"
+            },
+            "myanalyzertitle": {
+              "filter": [
+                "stop",
+                "lowercase",
+                "stemmer",
+                "synonym",
+                "elision"
+              ],
+              "type": "custom",
+              "tokenizer": "standard"
+            }
+          },
+          "char_filter": {
+            "remplace": {
+              "type": "mapping",
+              "mappings": [
+                "la => llllla ",
+                "des => ffff",
+                "abc => www"
+              ]
+            }
+          }
+        }
+       },
+  
+  "mappings": { 
+   "properties": {
+        "category": {
+          
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "content": {
+          "analyzer":"myanalyzercontent",
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "creator": {
+          "analyzer":"keyword",
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "description": {
+            "analyzer":"myanalyzertitle",
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "pubDate": {
+          "type": "date"
+        },
+        "title": {
+          "analyzer":"myanalyzertitle",
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
+      
+  }
+}
+
+
+
+
+
+POST _reindex
+{
+  "source": {
+    "index": "myblog2022"
+  },
+  "dest": {
+    "index": "myblog2025"
+  }
+}
+
+
+GET myblog2023/_search?q=description:implementer
+
+
+
+
+PUT myblog2025
+{
+  
+   "settings": {
+     
+        "analysis": {
+          "filter": {
+            "myfilter": {
+              "type": "stop",
+              "stopwords": "_french_"
+            },
+            "synonym": {
+              "type": "synonym",
+              "lenient": "true",
+              "synonyms": [
+                "open  => libre ,open ",
+                "coder => coder, implementer, developper"
+              ]
+            }
+          },
+          "analyzer": {
+            "myanalyzercontent": {
+              "filter": [
+                "lowercase",
+                "myfilter"
+              ],
+              "char_filter": [
+                "html_strip",
+                "remplace"
+              ],
+              "type": "custom",
+              "tokenizer": "standard"
+            },
+            "myanalyzertitle": {
+              "filter": [
+                "stop",
+                "lowercase",
+                "stemmer",
+                "synonym",
+                "elision"
+              ],
+              "type": "custom",
+              "tokenizer": "standard"
+            }
+          },
+          "char_filter": {
+            "remplace": {
+              "type": "mapping",
+              "mappings": [
+                "la => llllla ",
+                "des => ffff",
+                "abc => www"
+              ]
+            }
+          }
+        
+        }
+      
+    },
+  
+    "mappings": {
+      "dynamic": "strict",
+      "properties": {
+        "category": {
+           "term_vector":"with_positions_offsets_payloads",
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "content": {
+          "analyzer": "myanalyzercontent", 
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "creator": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "description": {
+          "analyzer": "myanalyzertitle", 
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "pubDate": {
+          "type": "date"
+        },
+        "title": {
+          "analyzer": "myanalyzertitle", 
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
+    }
+}
+
+PUT myblog2023/_mapping
+{
+    "properties": {
+        "category": {
+          "term_vector":"with_positions_offsets_payloads",
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+}
+}
+
+
+GET myblog2023/_search
+{
+"query": {
+  
+  "term": {
+    "category": {
+      "value": "meetup"
+    }
+  }
+}
+}
+
+
+
+GET myblog2023/_search
+{
+  
+  "query": {
+    "bool": {
+      "must": [
+       {
+          "match": {
+            "description": "implementer"
+          }
+        }
+      ],
+      "should": [
+        {
+          "match": {
+            "category": "meetup"
+          }
+        },
+        {
+          "match": {
+            "title": "un"
+          }
+        }
+      ]
+      
+    }
+  }
+}
+
+GET myblog2023/_search
+
+GET myblog2023/_search
+{
+ 
+  "_source": ["title", "creator","category"], 
+ 
+  
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "creator": "Xebia France"
+          }
+        },
+        {
+          "range": {
+            "pubDate": {
+              "gte": "2016-01-20",
+              "lte": "2017-09-20"
+            }
+          }
+        }
+      ],
+      "should": [
+        {
+          "match": {
+            "category.keyword": "DevOps"
+          }
+        }
+      ],"boost": 10
+    }
+  }
+}
+
+
+GET myblog2025/_termvectors/9
+
+
+
+
+GET myblog2023/_search
+{
+  "query": {
+    "dis_max": {
+      "tie_breaker": 0.7,
+      "boost": 1.2,
+      "queries": [
+        {
+             "match": {
+            "title": "open"
+             }
+        },
+        {
+          "match": {
+            "description": "projet"
+          }
+        }
+        ]
+    }
+  }
+}
+
+
+
+
+GET bank2022/_search
+
+
+GET bank2022/_mapping
+
+
+GET bank2022/_search
+{
+  "query": {
+    "bool": {
+     
+      "must_not": [
+        {
+          "range": {
+            "operations.amount": {
+             
+              "lt": 200
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+
+GET bank2022/_search
+{
+  "query": {
+    "bool": {
+     
+    
+      "must_not": [
+        {
+          "range": {
+            "operations.amount": {
+              "lte": 200
+              }
+          }
+        },
+         {
+          "term": {
+            "operations.type": {
+              "value": "cridit"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+
+
+
+GET bank2022/_search
+{
+  "size": 0, 
+  "query": {
+    "term": {
+      "gender": {
+        "value": "male"
+      }
+    }
+  }, 
+  "aggs": {
+    "moysold": {
+      "avg": {
+        "field": "balance"
+      }
+    },
+    "maxamount":{
+"max": {
+        "field": "operations.amount"
+      }
+    },
+    "minage":{
+      "min": {
+        "field": "age"
+      }
+    },
+    "countop":{
+      "value_count": {
+        "field": "operations.type.keyword"
+      }
+    }
+  }
+}
+
+
+
+
+GET bank2022/_search
+{
+  "size": 0, 
+  "aggs": {
+    "bygender": {
+      "terms": {
+        "field": "gender.keyword"
+      },
+         "aggs": {
+       
+            "byage":{
+                "range": {
+                    "field": "age",
+                    "ranges": [
+                      {
+                        "from": 16,
+                        "to": 22
+                      },
+                      {
+                        "from": 23,
+                        "to": 30
+                      },
+                     { "from": 31}
+                    ]
+                  }
+                }
+        }
+      }
+    }
+  }
+
+//recuperer des stats par apport au gender 
+//recuperer des stats sur les amount des operations par gender et par tranche d'age
+
+
+
+GET bank2022/_search
+{
+  "size": 0,
+  "aggs": {
+    "bygender": {
+      "terms": {
+        "field": "gender.keyword",
+        "size": 10
+      },"aggs": {
+        "byage": {
+         "histogram": {
+           "field": "age",
+           "interval": 10
+         },"aggs": {
+            "sts": {
+              "stats": {
+                "field": "operations.amount"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+}
+
+
+
+GET bank2022/_search
+{
+  "size": 0,
+  "aggs": {
+    "bymois": {
+      "date_histogram": {
+        "keyed": true, 
+        
+        "field": "operations.operationDate",
+        "calendar_interval": "1M"
+      },"aggs": {
+        "moy": {
+          "avg": {
+            "field": "operations.amount"
+          }
+        }
+      }
+    }
+  }
+  
+}
+
+GET bank2022/_search
+{
+  "size": 0,
+  "aggs": {
+    "bymois": {
+      "date_range": {
+        "keyed": true, 
+        
+        "field": "operations.operationDate",
+       "ranges": [
+         {
+           "from": "2014-03-01",
+           "to": "2016-03-01",
+           "key": "old"
+         },
+          {
+           "from": "2017-03-01",
+           "to": "2021-03-01",
+           "key": "new"
+         }
+       ]
+      },"aggs": {
+        "moy": {
+          "avg": {
+            "field": "operations.amount"
+          }
+        }
+      }
+    }
+  }
+  
+}
+
+
+Récupérer les opérations des comptes par trimestre de l’année 2015
+
+Apres regrouper par gendre
+Repartir les données par deux tranches d'Age (mineur et majeur)
+
+
+
+
+
+
+
+
+GET bank2022/_search
+{
+  "size": 0, 
+ 
+  
+  "aggs": {
+    "bytrimetstre": {
+"date_range": {
+        "field": "operations.operationDate",
+        "keyed": true, 
+        "ranges": [
+          {
+            "from": "2015-01-01",
+            "to": "2015-03-31",
+            "key": "trimistre1"
+          },
+          {
+            "from": "2015-04-01",
+            "to": "2015-06-30",
+            "key": "trimistre2"
+          }
+        ]
+      },
+         "aggs": {
+        "bygender": {
+          "terms": {
+            "field": "gender.keyword"
+          },
+          "aggs": {
+        "byage": {
+          "histogram": {
+            "field": "age",
+            "interval": 20
+          }
+        }
+      }
+        }
+      }
+      
+    }
+  }
+}
+
+
+
+
+
+
+GET bank2022/_search
+{
+  "size": 0, 
+ 
+  
+  "aggs": {
+    "bytrimetstre": {
+"date_range": {
+        "field": "operations.operationDate",
+        "keyed": true, 
+        "ranges": [
+          {
+            "from": "2015-01-01",
+            "to": "2015-03-31",
+            "key": "trimistre1"
+          },
+          {
+            "from": "2015-04-01",
+            "to": "2015-06-30",
+            "key": "trimistre2"
+          }
+        ]
+      },
+         "aggs": {
+        "bygender": {
+          "terms": {
+            "field": "gender.keyword"
+          }
+      
+        },
+        "byage": {
+          "histogram": {
+            "field": "age",
+            "interval": 20
+          }
+        }
+      }
+      }
+      
+    }
+  
+}
+
+
+
+GET bank2022/_search
+{
+  "size": 0,
+  "aggs": {
+    "NAME": {
+      "composite": {
+        "sources": [
+          {
+            "byx": {
+              "terms": {
+                "field": "gender.keyword"
+              }
+            }
+          },
+          {
+            "byy":{
+              "histogram": {
+                "field": "age",
+                "interval": 10
+              }
+            }
+            
+          },
+           {
+            "byz":{
+              "date_histogram": {
+                "field": "operations.operationDate",
+                "calendar_interval": "year"
+              }
+            }
+            
+          }
+        ]
+      }
+    }
+  }
+}
+
+
+GET bank2022/_search
+{
+  "size": 0,
+  "aggs": {
+    "NAME": {
+      "terms": {
+        "field": "gender.keyword",
+        "size": 10
+      },"aggs": {
+        "NAME": {
+          "histogram": {
+            "field": "age",
+            "interval": 10
+          }
+        }
+      }
+    }
+  }
+}
+
+
+GET kibana_sample_data_logs/_search
+{
+  "query": {
+    "bool": {
+      "must_not": [
+        {
+          "match": {
+            "response": "200"
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+GET bank2022/_search
+{
+  "size": 0,
+  "query": {
+    "term": {
+      "gender.keyword": {
+        "value": "female"
+      }
+    }
+  },"aggs": {
+    "moy": {
+      "avg": {
+        "field": "age"
+      }
+    }
+  }
+}
+
+
+GET bank2022/_search
+{
+  "size": 0,
+  "aggs": {
+    "femme": {
+      "filter": {
+      "term": {
+          "gender.keyword": "female"
+        }
+      },"aggs": {
+        "moy": {
+          "avg": {
+            "field": "age"
+          }
+        }
+      }
+    }
+  }
+}
+
+Calculer la moyenne mobile de 
+La somme des amounts des opérations
+ pour chaque mois
+
+
+GET bank2022/_search?size=0
+{
+  "aggs": {
+    "bymois": {
+"date_histogram": {
+       "field": "operations.operationDate",
+       "calendar_interval": "month"
+     },
+     "aggs": {
+       "som": {
+         "sum": {
+           "field": "operations.amount"
+         }
+       },
+       "moy_mob":{
+         "avg_bucket": {
+           "buckets_path": "som"
+         }
+       }
+     }
+    }
+  }
+}
+
+
+//pourcentage des  des ages des femmes
+somme des ages totale (agg)
+somme des ages des femmes (agg)
+division
+
+
+GET bank2022/_search?size=0
+{
+  "aggs": {
+    "histo": {
+      "date_histogram": {
+        "field": "operations.operationDate",
+        "calendar_interval": "1y"
+      },
+    "aggs": {
+    "totale": {
+      "sum": {
+        "field": "age"
+      }
+    },
+    "f":{
+      "filter": {
+        "term": {
+          "gender.keyword": "female"
+        }
+      },
+      "aggs": 
+      {
+        "sf": {
+          "sum": {
+            "field": "age"
+          }
+        }
+      }
+    },
+    "pourcentage":{
+      "bucket_script": {
+        "buckets_path": {
+          "vs":"totale",
+          "vf":"f>sf"
+        },
+        "script": "params.vf/params.vs * 100"
+      }
+    }
+  }
+}
+}}
+
+
+som totale
+som dans mois
+
+//pourcentage des ammount des femme par mois
+GET bank2022/_search?size=0
+{
+  "aggs": {
+     "bymois": {
+      "date_histogram": {
+        "field": "operations.operationDate",
+        "calendar_interval": "month"
+      },
+    
+ 
+       "aggs": {
+          "t":{
+             "sum": {
+          "field": "operations.amount"
+        }
+      }
+          ,"femme": {
+            "filter": {
+              "term": {
+                "gender.keyword": "female"
+              }
+      },
+      "aggs": {
+        "som": {
+          "sum": {
+            "field": "operations.amount"
+          }
+        }
+       
+        }
+      },
+             "res":{
+        "bucket_script": {
+          "buckets_path": {
+            "vs":"t",
+            "vm":"femme>som"
+          },
+          "script": "params.vm/params.vs *100"
+        }
+      }
+    
+    }
+  }}
+}
+
+
+//pourcentage  des amount par mois
+
+GET  bank2022/_search
+{
+  "size": 0, 
+  "aggs": {
+    "bydate": {
+      "date_histogram": {
+        "field": "operations.operationDate",
+        "calendar_interval": "1y"
+      
+      },"aggs": {
+        "som": {
+          "sum": {
+            "field": "operations.amount"
+          }
+        }
+      }
+    },
+    "avg_mois":{
+      "stats_bucket": {
+        "buckets_path": "bydate>som",
+        "gap_policy": "skip",
+        "format": "#,##0.00;(#,##0.00)"
+      }
+    }
+  }
+}
+somm debit/som total par moi
+
+//pourcentage des amount  des operation de debit et celle de cridit par mois
+
+GET bank2022/_search?size=0
+{
+  "aggs": {
+    "NAME": {
+      "terms": {
+        "field": "operations.type.keyword"
+        
+      },"aggs": {
+        "som": {
+          "sum": {
+            "field": "operations.amount"
+          }
+        }
+      }
+    }
+  }
+}
+
+GET bank2022/_search?size=0
+{
+  "aggs": {
+    "mois": {
+      "date_histogram": {
+        "field": "operations.operationDate",
+        "calendar_interval": "month"
+      },"aggs": {
+        "type": {
+         "terms": {
+           "field": "operations.type.keyword"
+           
+         }
+         ,"aggs": {
+            "somop": {
+              "sum": {
+                "field": "operations.amount"
+              }
+            }
+          }
+        },
+        "total":{
+          "sum": {
+            "field": "operations.amount"
+          }
+        },
+        "res":{
+          "bucket_script": {
+            "buckets_path": {
+              "debit":"type['cridit']>somop",
+              "total":"total"
+            },
+            "script": "params.debit/params.total"
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+//autre facons
+GET bank2022/_search?size=0
+{
+  "aggs": {
+    "mois": {
+      "date_histogram": {
+        "field": "operations.operationDate",
+        "calendar_interval": "month"
+      },"aggs": {
+        "type": {
+"terms": {
+           "field": "operations.type.keyword"
+         }
+         ,"aggs": {
+            "somop": {
+              "sum": {
+                "field": "operations.amount"
+              }
+            }
+          }
+        },
+        "total":{
+          "sum": {
+            "field": "operations.amount"
+          }
+        },
+        "res":{
+          "bucket_script": {
+            "buckets_path": {
+              "debit":"type['debit']>somop",
+              "total":"total"
+            },
+            "script": "params.debit/params.total"
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+GET  bank2022/_search
+{
+  "size": 0, 
+  "aggs": {
+    "bymois":{
+      "date_histogram": {
+        "field": "operations.operationDate",
+        "calendar_interval": "month"
+      },
+      "aggs": {
+          "bygender":{
+            "filter": {
+            "term": {
+               "operations.type.keyword": "debit"
+             }
+            },
+            "aggs": {
+              "som": {
+                "sum": {
+                  "field": "operations.amount"
+                }
+              }
+            }
+          },
+          "totale":
+          {
+            "sum": {
+              "field": "operations.amount"
+            }
+          },
+          "pourcentage":{
+            "bucket_script": {
+              "buckets_path": {
+                "sompargender":"bygender>som",
+                "totale":"totale"
+              },
+              "script": "params.sompargender/params.totale * 100"
+            }
+          }
+          
+        }
+    }}
+}
+
+//pourcentage des soldes de femmes / hommes
+GET bank2022/_search
+{
+  "size": 0, 
+  "aggs": {
+   "gender":{
+     "date_histogram": {
+       "field": "operations.operationDate",
+       "calendar_interval": "month"
+     
+     },
+     "aggs": {
+        "totale": {
+            "sum": {
+              "field": "balance"
+            }
+    },
+        "femme":{
+          "filter": {
+              "term": {
+                  "gender.keyword": "female"
+            }
+          },
+          "aggs": {
+            "sumfemme": {
+              "sum": {
+                "field": "balance"
+              }
+            }
+          }
+    },
+        "percentage":{
+      "bucket_script": {
+        "buckets_path": {
+        "sfemme":"femme>sumfemme",
+        "totale":"totale"
+        
+      },
+      "script": "params.sfemme/params.totale"
+    }
+    }
+     }
+   }
+  }
+}
+
+
+
+
+//pourcentage des amount de femmes%hommes par mois
+GET bank2022/_search
+{
+  "size": 0, 
+  "aggs": {
+    "bydate":{
+      "date_histogram": {
+        "field": "operations.operationDate",
+        "calendar_interval": "month"
+      },
+      "aggs": {
+        "gender": {
+          "terms": {
+            "field": "gender.keyword"
+          },
+          "aggs": {
+            "som": {
+              "sum": {
+                "field": "operations.amount"
+              }
+            }
+          }
+        },
+        "ratio":{
+          "bucket_script": {
+            "buckets_path": {
+              "f":"gender['female']>som",
+              "h":"gender['male']>som"
+            },
+            "script": "params.f/params.h"
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
+GET bank2022/_search
+{
+  "size": 0, 
+  "aggs": {
+   "gender":{
+     "date_histogram": {
+       "field": "operations.operationDate",
+       "calendar_interval": "month"
+     
+     },"aggs": {
+       "som": {
+         "sum": {
+           "field": "operations.amount"
+         }
+       },
+       "xx":{
+         "serial_diff": {
+           "buckets_path": "som",
+           "lag": 7
+         }
+       }
+     }
+     
+   }
+    
+  }
+  
+}
+
+
+
+
+GET kibana_sample_data_logs/_mapping
+
+GET kibana_sample_data_logs/_settings
+GET kibana_sample_data_logs/_search
+
+
+GET kibana_sample_data_logs/_search?size=0
+{
+  "aggs": {
+    "NAME": {
+      "terms": {
+        "field": "response.keyword",
+        "size": 10
+      }
+    }
+  }
+  
+}
+
+
+GET kibana_sample_data_logs/_search?size=0
+{
+  "aggs": {
+    "bydate": {
+      "date_histogram": {
+        "field": "timestamp",
+        "calendar_interval": "day"
+      },"aggs": {
+        "byresponse": {
+          "terms": {
+            "field": "response.keyword"
+            
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+PUT _ilm/policy/mypolicy001
+{
+  "policy": {
+    "phases": {
+      "hot": {
+      "min_age": "1m",
+      "actions": {
+        "set_priority": {
+          "priority": 100
+        },
+        "rollover": {
+          "max_age": "2m",
+          "max_docs": 20
+          
+        }
+      }
+    }
+      ,"warm": {
+        "min_age": "5m",
+        "actions": {
+          
+        }
+      },
+      "cold": {
+        "min_age": "7d",
+        "actions": {}
+      }
+      
+    }
+  }
+}
+
+GET _alias
+
+POST _aliases
+{
+  "actions": [
+    {
+      "add": {
+        "index": "bank2022",
+        "alias": "bankalias"
+      }
+    }
+  ]
+}
+
+
+GET bank2022/_search
+
+
+POST _reindex
+{
+  "source": {
+    "index": "bank2022"
+  },
+  "dest": {
+    "index": "bank-2022"
+  }
+}
+
+PUT bank-2022/_doc/17
+{
+  
+          "account_number": 100,
+          "balance": 5393.84,
+          "age": 23,
+          "firstname": "sofrecom2",
+          "lastname": "Sharpe",
+          "gender": "male",
+          "company": "sofrecom",
+          "email": "moralessharpe@cosmosis.com",
+          "phone": "+1(979)401-2554",
+          "address": "812FrontStreet,4427",
+          "city": "Defiance",
+          "state": "Connecticut",
+          "operations": [
+            {
+              "amount": 108.28,
+              "operationDate": "2016-03-25T07:56:31",
+              "type": "cridit"
+            },
+            {
+              "amount": 369.89,
+              "operationDate": "2020-10-13T03:59:48",
+              "type": "debit"
+            },
+            {
+              "amount": 312.43,
+              "operationDate": "2018-01-07T09:08:51",
+              "type": "debit"
+            },
+            {
+              "amount": 183.76,
+              "operationDate": "2018-12-25T12:58:03",
+              "type": "debit"
+            },
+            {
+              "amount": 246.99,
+              "operationDate": "2017-03-19T06:19:20",
+              "type": "cridit"
+            }
+          ]
+        }
+
+
+
+
+
+GET  bank-2022/_ilm/explain
