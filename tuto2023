@@ -1,0 +1,1079 @@
+GET myblog2023/_search
+
+GET myblog2023/_settings
+
+POST myblog2023/_close
+
+PUT myblog2023/_settings
+{
+  
+"analysis": {
+  "analyzer": {
+    "myanalyzer1":
+    {
+      "type": "standard",
+      "max_token_length": "5",
+      "stopwords": "_english_"
+      
+    }
+  }
+}
+}
+
+POST myblog2023/_open
+
+POST myblog2023/_analyze
+{
+  "analyzer": "myanalyzer1",
+  "text": "bonjour sofrecom the search api and indexing"
+}
+
+
+POST _analyze
+{
+  "analyzer": "myanalyzer1",
+  "text": "bonjour sofrecom the search api and indexing"
+}
+
+
+
+PUT myblog2023/_settings
+{
+  
+"analysis": {
+  "analyzer": {
+    "myanalyzer2":
+    {
+      "type":"pattern",
+      "pattern":"-"
+      
+    }
+  }
+}
+}
+
+
+POST myblog2023/_open
+
+
+POST myblog2023/_analyze
+{
+  "analyzer": "myanalyzer3",
+  "text": "<h1>hello</h1> Abc éléments"
+}
+
+
+POST myblog2023/_close
+
+contentanalyzer : html_strip,  standard, lowrecase, stop
+
+descriptionanalyzer   standard ellision , lowercase, synonyms, stemmer
+
+creatoranalyzer edgengram
+
+categoryanalyzer keyword lowercase
+
+
+PUT myblog2023/_settings
+{
+    
+"analysis": {
+  "analyzer": {
+    "contentanalyzer":    {
+      "type":"custom",
+      "tokenizer": "standard",
+      "char_filter": ["html_strip","replace1"],
+      "filter": ["lowercase","asciifolding","stop1"]
+    },
+    "descriptionanalyzer":{
+      "type":"custom",
+      "tokenizer": "standard",
+      "filter": ["lowercase","asciifolding","stop1", "elision","stemmer","synonym1"]
+      
+    },
+     "creatoranalyzer":{
+      "type":"custom",
+      "tokenizer": "edge_ngram1"
+    
+  },
+     "catogoryanalyzer":{
+    "type":"custom",
+    "tokenizer":"keyword",
+    "filter":["lowercase"]
+  }
+    
+  },
+  "char_filter": {
+          "replace1":{
+              "type":"mapping",
+              "mappings":[
+                "abc => azerty",
+                "title => titre"
+                ]
+    }
+  },
+  "filter": {
+          "stop1":{
+            "type":"stop",
+            "stopwords":"_french_"
+          },
+          "synonym1":{
+                  "type":"synonym",
+                   "synonyms":[
+                            "open => ouvert, open",
+                            "conférences => forums, conférences, workshop"
+                            ]
+                }
+  },
+  "tokenizer": {
+    "edge_ngram1":{
+      "type":"edge_ngram",
+      "min_gram": 2,
+      "max_gram": 20,
+        "token_chars": [
+            "letter"
+          ]
+    }
+  }
+}
+}
+
+
+POST myblog2023/_analyze
+{
+  "analyzer": "myanalyzer3",
+  "text": "<h1>hello</h1> abc éléments title pour une expérience"
+}
+
+
+
+GET myblog2023/_search
+
+
+GET myblog2023/_mapping
+
+
+POST myblog2023/_analyze
+{
+  "analyzer": "catogoryanalyzer",
+  "text": [
+            "Craft","Hackergarten","Kodo Kojo","meet up","opensource"
+          ]
+}
+
+
+
+
+POST index004/_doc/4
+{
+  
+ 
+  "age1":123
+}
+
+
+GET index004/_mapping
+
+
+
+
+PUT index004
+{
+  "mappings": {
+    "dynamic":"strict",
+      "properties": {
+        "age": {
+          "type": "long"
+        },
+        "nom": {
+          "type": "text",
+          "analyzer": "standard",
+          
+          
+        },
+        "adresse": {
+          "type": "text",
+          "analyzer": "simple"
+        }
+      }
+    }
+}
+
+
+
+
+PUT index002/_mappings
+{
+
+      "properties": {
+        "azerty_code_abc": {
+          "type": "integer"
+          
+        }
+    }
+  
+}
+
+GET myblog2024/_settings
+
+GET myblog2023/_mapping
+
+GET myblog2025/_search?q=les
+
+//Les conférences de la XebiCon se dévoilent !
+
+GET myblog2025/_termvectors/5?fields=title
+
+
+PUT myblog2025/
+{
+  
+   "settings": {
+      
+    "analysis": {
+          "filter": {
+            "synonym1": {
+              "type": "synonym",
+              "synonyms": [
+                "open => ouvert, open",
+                "conférences => forums, conférences, workshop"
+              ]
+            },
+            "stop1": {
+              "type": "stop",
+              "stopwords": "_french_"
+            }
+          },
+          "char_filter": {
+            "replace1": {
+              "type": "mapping",
+              "mappings": [
+                "abc => azerty",
+                "title => titre"
+              ]
+            }
+          },
+          "analyzer": {
+            "myanalyzer1": {
+              "type": "standard",
+              "max_token_length": "5",
+              "stopwords": "_english_"
+            },
+            "descriptionanalyzer": {
+              "filter": [
+                "lowercase",
+                "asciifolding",
+                "stop1",
+                "elision",
+                "stemmer",
+                "synonym1"
+              ],
+              "type": "custom",
+              "tokenizer": "standard"
+            },
+            "creatoranalyzer": {
+              "type": "custom",
+              "tokenizer": "edge_ngram1"
+            },
+            "contentanalyzer": {
+              "filter": [
+                "lowercase",
+                "asciifolding",
+                "stop1"
+              ],
+              "char_filter": [
+                "html_strip",
+                "replace1"
+              ],
+              "type": "custom",
+              "tokenizer": "standard"
+            },
+            "catogoryanalyzer": {
+              "filter": [
+                "lowercase"
+              ],
+              "type": "custom",
+              "tokenizer": "keyword"
+            },
+            "myanalyzer3": {
+              "filter": [
+                "lowercase",
+                "asciifolding",
+                "stop1"
+              ],
+              "char_filter": [
+                "html_strip",
+                "replace1"
+              ],
+              "type": "custom",
+              "tokenizer": "ngram"
+            },
+            "myanalyzer2": {
+              "pattern": "-",
+              "type": "pattern"
+            }
+          },
+          "tokenizer": {
+            "edge_ngram1": {
+              "token_chars": [
+                "letter"
+              ],
+              "min_gram": "2",
+              "type": "edge_ngram",
+              "max_gram": "20"
+            }
+          }
+        }
+        
+       
+   },
+    "mappings": { 
+      "properties": {
+        "category": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          },
+           "analyzer":"catogoryanalyzer",
+          "term_vector": "with_positions_offsets"
+        },
+        "content": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          },
+          "analyzer":"contentanalyzer",
+          "term_vector": "with_positions_offsets"
+        },
+        "creator": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          },
+          "analyzer": "creatoranalyzer"
+        },
+        "description": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          },
+          "analyzer": "descriptionanalyzer",
+          
+          "term_vector": "with_positions_offsets"
+        },
+        "pubDate": {
+          "type": "date"
+        },
+        "title": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+            
+          },
+          "analyzer": "descriptionanalyzer",
+          "term_vector": "with_positions_offsets"
+        }
+      }
+    }
+}
+
+
+
+POST _reindex
+{
+  "source": {
+    "index": "myblog2024"
+  },
+  "dest": {
+    "index": "myblog2025"
+  }
+}
+
+
+
+GET myblog**/_search?q=title:forum
+
+
+
+GET myblog2025/_search
+{
+"query": {
+  "term": {
+    "title": {
+      "value": "devoil"
+    }
+  }
+}
+}
+
+
+
+GET myblog2025/_search
+{
+"query": {
+  "match": {
+    "title": "devoile"
+  }
+}
+}
+
+
+
+GET myblog2025/_search
+{
+"query": {
+  "bool": {
+    "must": [
+      {
+        "match": {
+          "creator": "Xebia"
+        }
+      },
+      {
+        "match": {
+          "category": "DevOps"
+        }
+      }
+    ],
+    "must_not": [
+      {
+        "range": {
+          "pubDate": {
+            
+            "lte": "2016-03-16"
+          }
+        }
+      }
+    ],
+    "should": [
+      {
+        "match": {
+          "title": "forum"
+        }
+      }
+    ]
+  }
+}
+}
+
+recherche des articles publiés entre deux date et qui traitenet le sujet de l'open source et de prefernce qui de la categorie agle ou devops
+
+GET myblog2025/_search
+
+GET myblog2025/_search
+{
+  "_source": ["category"], 
+"query": {
+  
+  "bool": {
+    "must": [
+      {
+        "range": {
+          "pubDate": {
+            "gte": "2010-03-16",
+            "lte": "2015-03-16"
+          }
+        }
+      }
+    ],"should": [
+      {
+        "match": {
+          "category": "Craft"
+        }
+      },
+      {
+        "match": {
+          "category": "devops"
+        }
+      }
+    ],"minimum_should_match": 1,
+    "boost": 1
+  }
+}
+}
+
+
+
+
+GET myblog2025/_search
+{
+  
+"query": {
+  "boosting": {
+    "positive": {
+      "match": {
+        "title": "source"
+      }
+    },
+    "negative": {
+      "match": {
+        "description": "officiel"
+      }
+      
+    },"negative_boost": 0.2
+  }
+}
+}
+
+
+
+
+GET myblog2025/_search
+{
+  
+"query": {
+"dis_max": {
+    "tie_breaker": 0.7,
+    "boost": 1.2,
+    "queries": [
+      {
+        "match": {
+          "title": "source"
+        }
+      },
+      {
+        "match": {
+          "category": "devops"
+        }
+      },
+      {
+        "term": {
+          "creator": {
+            "value": "xebia"
+          }
+        }
+      },
+      {
+        "match_phrase": {
+          "title": "Les conférences de la"
+        }
+      }
+      ]
+  }
+  
+  
+  
+}
+}
+
+d1----tf 5
+d2 ---- tf 2
+
+pour 
+idf terme---- 10doc
+    terme ----- 1doc
+
+
+GET myblog2025/_search
+{
+  "explain": true, 
+  "_source": ["title"],
+  "query": {
+    "match": {
+      "title": "Xebia"
+    }
+  }
+  
+}
+
+GET bank2023/_mapping
+
+POST  bank2023/_analyze
+{
+  "tokenizer": "ngram",
+  "text": "female"
+}
+
+GET bank2023/_search
+
+{
+  "query": {
+    "match": {
+      "gender": "Female"
+    }
+  }
+}
+
+
+
+GET bank2023/_search
+{
+  "size": 0, 
+  "aggs": {
+    "ageavg": {
+      "avg": {
+        "field": "age"
+      }
+    },
+     "maxage":{
+      "max": {
+              "field": "age"
+            }
+    },
+    "minage":{
+      "min": {
+        "field": "age"
+      }
+    },
+    "statage":
+    {
+       "value_count": {
+        "field": "gender.keyword"
+      }
+    }
+  }
+}
+
+
+
+
+
+GET bank2023/_search
+{
+  "size": 0, 
+  "query": {
+    "term": {
+      "gender": {
+        "value": "male"
+      }
+    }
+  }, 
+  "aggs": {
+    "ageavg": {
+      "avg": {
+        "field": "age"
+      }
+    },
+     "maxage":{
+      "max": {
+              "field": "age"
+            }
+    },
+    "minage":{
+      "min": {
+        "field": "age"
+      }
+    }
+  }
+}
+
+Quel est le max des amounts des operations du client 1?
+GET bank2023/_search?q=account_number:1
+{
+  "aggs": {
+    "maxamount": {
+      "max": {
+        "field": "operations.amount"
+      }
+    }
+  }
+}
+
+GET bank2023/_search
+{
+  "query": {
+    "match": {
+      "account_number": "1"
+    }
+  },
+  "aggs": {
+    "maxamount": {
+      "max": {
+        "field": "operations.amount"
+      }
+    }
+  }
+}
+
+La somme des amount des opérations de débit /crédit? Pour les female
+
+
+
+GET bank2023/_search?size=0
+{
+  "query": {
+    "term": {
+      "gender.keyword": {
+        "value": "female"
+      }
+    }
+  },
+  "aggs": {
+    "bytype":{
+      "terms": {
+        "field": "operations.type.keyword"
+      },"aggs": {
+        "som": {
+          "sum": {
+            "field": "operations.amount"
+          }
+        }
+      }
+    }
+  }
+}
+
+GET bank2023/_search?size=0
+{
+  "aggs": {
+    "bygender": {
+      "terms": {
+        "field": "gender.keyword"
+      },"aggs": {
+        "NAME": {
+          "sum": {
+            "field": "operations.amount"
+          }
+        }
+      }
+    }
+  }
+  
+}
+
+
+
+
+repartition des clients par tranche d'age????
+
+
+
+GET bank2023/_search?size=0
+{
+  "aggs": {
+    "bytrancgeage": {
+      "histogram": {
+        "field": "age",
+        "interval": 10
+      }
+    }
+  }
+}
+
+
+
+GET bank2023/_search?size=0
+{
+  "aggs": {
+    "bytrache2":{
+      "range": {
+        "field": "age",
+        "keyed": true, 
+        "ranges": [
+          {
+            "from": 17,
+            "to": 22,
+            "key": "mineur"
+          },
+          {
+            "from": 23,
+            "to": 30,
+            "key": "moy"
+            
+          },
+          {
+            "from": 30,
+            "key": "majeur"
+          }
+        ]
+      },
+      "aggs": {
+        "gender":
+        {
+          "terms": {
+            "field": "gender.keyword"
+          },"aggs": {
+            "NAME": {
+              "avg": {
+                "field": "balance"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+Récupérer les opérations des comptes par mois
+Apres regrouper par gendre
+Repartir les données par deux tranches d'Age (mineur et majeur)
+
+A la fin calculer la moyen des amount
+
+
+
+GET bank2023/_search?size=0
+{
+  "aggs": {
+    "bymount":
+    {
+      "date_histogram": {
+        "field": "operations.operationDate",
+        "calendar_interval": "month"
+      },
+      "aggs": {
+        "bygender": {
+          "terms": {
+            "field": "gender.keyword"
+          },
+          "aggs": {
+            "age": {
+              "range": {
+                "field": "age",
+                "keyed": true, 
+                "ranges": [
+                  {
+                    "from": 160,
+                    "to": 24,
+                    "key": "mineur"
+                  },
+                  {
+                    "from": 25,
+                    "key": "majeur"
+                  }
+                ]
+              },
+              "aggs": {
+                "avgamount": {
+                  "avg": {
+                    "field": "operations.amount"
+                  }
+                }
+              }
+            
+              
+            },
+            "avgamout2":{
+              "avg": {
+                "field": "account_number"
+              }
+            }
+            
+          }
+        },
+        "byage":{}
+      }
+    },
+    "gg":{}
+    
+  }
+}
+
+
+GET bank2023/_search?size=0
+{
+  "aggs": {
+    "comp1":
+    {
+      "composite": {
+        "sources": [
+          {
+            "bygender": {
+              "terms": {
+                "field": "gender.keyword"
+              }
+            }
+          },
+          {
+            "byage":
+            {
+              "histogram": {
+                "field": "age", 
+                "interval": 1
+              }
+            }
+            
+          },
+          {
+            
+          "byop":
+          {
+            "terms": {
+              "field": "operations.type.keyword"
+            }
+          }
+          }
+        ]
+      }
+      ,"aggs": {
+                "avg": {
+                  "avg": {
+                    "field": "balance"
+                  }
+                }
+              }
+    }
+    
+  }
+}
+
+
+
+GET bank2023/_search?size=0
+{
+  "aggs": {
+    "female":
+    {
+      "filter": {
+        "term": {
+          "gender.keyword": "female"
+        }
+      },
+      "aggs": {
+        "NAME": {
+          "avg": {
+            "field": "balance"
+          }
+        }
+      }
+    },
+    "male":{
+      "filter": {
+        "term": {
+          "gender.keyword": "male"
+        }
+      }
+    }
+  }
+}
+
+
+GET bank2023/_search?size=0
+{
+  "query": {
+    "term": {
+      "gender.keyword": {
+        "value": "female"
+      }
+    }
+  },"aggs": {
+    "avg": {
+      "avg": {
+        "field": "balance"
+      }
+    }
+  }
+}
+
+etudier l'Influence de la age et du sexe sur la banque
+
+
+
+
+axes 
+
+x---> (elements regroupement -  backets)
+y--> (valeur--- metriques)
+
+
+
+
+
+
+Calculer la part du total des amounts pour les femmes et les homme
+
+reaptition selon le gender (female       male )
+
+
+
+totale (sum)
+sum femme et sum homme
+
+
+taux:  sumfemme/sum totale
+
+
+
+
+GET bank2023/_search?size=0
+{
+ 
+ "aggs": {
+   "gg":{
+     "terms": {
+       "field": "operations.type.keyword"
+     }, 
+       "aggs": {
+      
+      "female":{
+        "filter": {
+          "term": {
+            "gender.keyword": "female"
+          }
+        },
+        "aggs": {
+          
+         "bysom": {
+               "sum": {
+                 "field": "balance"
+               }
+         }
+         }
+         },
+      "totale":   {
+           "sum": {
+             "field": "balance"
+           }
+    },
+      "tauxfemale":{
+          "bucket_script": {
+            "buckets_path": {
+              "t":"totale", 
+              "femme":"female.bysom"
+             
+            },
+            "script": "params.femme/params.t"
+          }
+        },
+        "tauxmale":{
+          "bucket_script": {
+            "buckets_path": {
+              "t":"totale", 
+              "femme":"female.bysom"
+             
+            },
+            "script": "params.femme/params.t"
+          }
+        }
+   
+ } 
+}
+}
+}
+
+//il doit etre a l interieur (sous agg)
+//entrer doit avoir une seule valeur
+
+
+la part(taux) des amount operations de debit et de cridit (% totale) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
